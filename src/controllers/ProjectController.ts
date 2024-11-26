@@ -1,12 +1,13 @@
 import type { Request, Response } from "express";
 import Project from "../models/Project";
+import { projectMsg, errorMsg } from "../messages";
 
 export class ProjectController {
   static createProject = async (req: Request, res: Response) => {
     const project = new Project(req.body);
     try {
       await project.save();
-      res.send("Project created");
+      res.json({ msg: projectMsg.PROJECT_CREATED });
     } catch (error) {
       console.log(error);
     }
@@ -26,7 +27,7 @@ export class ProjectController {
     try {
       const project = await Project.findById(id).populate("tasks");
       if (!project) {
-        const error = new Error("Project not found");
+        const error = new Error(errorMsg.PROJECT_NOT_FOUND);
         res.status(404).json({ error: error.message });
       }
       res.json(project);
@@ -40,7 +41,7 @@ export class ProjectController {
     try {
       const project = await Project.findById(id);
       if (!project) {
-        const error = new Error("Project not found");
+        const error = new Error(errorMsg.PROJECT_NOT_FOUND);
         res.status(404).json({ error: error.message });
       }
       project.clientName = req.body.clientName;
@@ -58,11 +59,11 @@ export class ProjectController {
     try {
       const project = await Project.findById(id);
       if (!project) {
-        const error = new Error("Project not found");
+        const error = new Error(errorMsg.PROJECT_NOT_FOUND);
         res.status(404).json({ error: error.message });
       }
       await project.deleteOne();
-      res.send("Project deleted");
+      res.json({ msg: projectMsg.PROJECT_DELETED });
     } catch (error) {
       console.log(error);
     }

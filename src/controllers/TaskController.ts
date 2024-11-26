@@ -1,5 +1,6 @@
 import { type Request, type Response } from "express";
 import Task from "../models/Task";
+import { errorMsg } from "../messages";
 
 export class TaskController {
   static createTask = async (req: Request, res: Response) => {
@@ -11,7 +12,7 @@ export class TaskController {
       res.send("Task created");
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
 
@@ -23,7 +24,7 @@ export class TaskController {
       res.json(tasks);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
 
@@ -32,7 +33,7 @@ export class TaskController {
       res.json(req.task);
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
 
@@ -44,7 +45,7 @@ export class TaskController {
       res.send("Task updated");
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
 
@@ -57,7 +58,7 @@ export class TaskController {
       res.send("Task deleted");
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
 
@@ -69,7 +70,7 @@ export class TaskController {
       res.send("Status Updated");
     } catch (error) {
       console.log(error);
-      res.status(500).json({ error: "Internal Server Error" });
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
 }
