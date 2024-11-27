@@ -1,6 +1,6 @@
 import { type Request, type Response } from "express";
 import Task from "../models/Task";
-import { errorMsg } from "../messages";
+import { errorMsg, taskMsg } from "../messages";
 
 export class TaskController {
   static createTask = async (req: Request, res: Response) => {
@@ -9,7 +9,7 @@ export class TaskController {
       task.project = req.project.id;
       req.project.tasks.push(task.id);
       await Promise.allSettled([task.save(), req.project.save()]);
-      res.send("Task created");
+      res.json({ msg: taskMsg.TASK_CREATED });
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
@@ -42,7 +42,7 @@ export class TaskController {
       req.task.name = req.body.name;
       req.task.description = req.body.description;
       await req.task.save();
-      res.send("Task updated");
+      res.json({ msg: taskMsg.TASK_UPDATED });
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
@@ -55,7 +55,7 @@ export class TaskController {
         (task) => task.toString() !== req.task.id.toString()
       );
       await Promise.allSettled([req.task.deleteOne(), req.project.save()]);
-      res.send("Task deleted");
+      res.json({ msg: taskMsg.TASK_DELETED });
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
@@ -67,7 +67,7 @@ export class TaskController {
       const { status } = req.body;
       req.task.status = status;
       await req.task.save();
-      res.send("Status Updated");
+      res.json({ msg: taskMsg.TASK_UPDATED });
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
