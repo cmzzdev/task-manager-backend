@@ -3,4 +3,8 @@ export const errorMsg = {
   INTERNAL_SERVER_ERROR: "Internal server errors",
   USER_ALREADY_REGIST: "User already registered",
   TOKEN_NOT_VALID: "Token not valid",
+  USER_NOT_FOUND: "User not found",
+  ACCOUNT_NOT_CONFIRMED:
+    "Account not confirmed yet, we send a confirmation email, please check it",
+  INCORRECT_PASSWORD: "Incorrect password",
 };

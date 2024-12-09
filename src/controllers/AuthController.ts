@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { errorMsg } from "../messages";
 import User from "../models/Auth";
 import { authMsg } from "../messages/authMessages";
-import { hashPassword } from "../utils/utils";
+import { checkPassword, hashPassword } from "../utils/utils";
 import Token from "../models/Token";
 import { generateToken } from "../utils/token";
 import { AuthEmail } from "../emails/AuthEmail";
@@ -46,12 +46,48 @@ export class AuthController {
       const tokenExist = await Token.findOne({ token });
       if (!tokenExist) {
         const error = new Error(errorMsg.TOKEN_NOT_VALID);
-        res.status(401).json({ error: error.message });
+        res.status(404).json({ error: error.message });
       }
       const user = await User.findById(tokenExist.user);
       user.confirmed = true;
       await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
       res.send({ msg: authMsg.ACCOUNT_CONFIRMED });
+    } catch (error) {
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+    }
+  };
+
+  static login = async (req: Request, res: Response) => {
+    try {
+      const { email, password } = req.body;
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error(errorMsg.USER_NOT_FOUND);
+        res.status(404).json({ error: error.message });
+      }
+      if (!user.confirmed) {
+        const token = new Token();
+        token.user = user.id;
+        token.token = generateToken();
+        await token.save();
+        // Send email
+        AuthEmail.sendConfirmationEmail({
+          email: user.email,
+          name: user.name,
+          token: token.token,
+        });
+        const error = new Error(errorMsg.ACCOUNT_NOT_CONFIRMED);
+        res.status(401).json({ error: error.message });
+      }
+
+      // Check password
+      const isPasswordCorrect = await checkPassword(password, user.password);
+      if (!isPasswordCorrect) {
+        const error = new Error(errorMsg.INCORRECT_PASSWORD);
+        res.status(401).json({ error: error.message });
+      }
+
+      res.send({ msg: authMsg.USER_AUTHENTICATED });
     } catch (error) {
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
