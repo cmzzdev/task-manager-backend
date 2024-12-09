@@ -22,4 +22,11 @@ router.post(
   AuthController.createAccount
 );
 
+router.post(
+  "/confirm-account",
+  body("token").notEmpty().withMessage("Token must not be empty"),
+  handleInputErrors,
+  AuthController.confirmAccount
+);
+
 export default router;
