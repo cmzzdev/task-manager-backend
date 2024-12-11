@@ -92,4 +92,39 @@ export class AuthController {
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
+
+  static requestConfirmationToken = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+
+      // Check if user exist
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error(errorMsg.USER_NOT_REGISTERED);
+        res.status(404).json({ error: error.message });
+      }
+
+      if (user.confirmed) {
+        const error = new Error(errorMsg.USER_ALREADY_CONFIRMED);
+        res.status(403).json({ error: error.message });
+      }
+
+      // Generate token
+      const token = new Token();
+      token.token = generateToken();
+      token.user = user.id;
+
+      // Send email
+      AuthEmail.sendConfirmationEmail({
+        email: user.email,
+        name: user.name,
+        token: token.token,
+      });
+
+      await Promise.allSettled([user.save(), token.save()]);
+      res.send({ msg: authMsg.RESEND_NEW_TOKEN });
+    } catch (error) {
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+    }
+  };
 }

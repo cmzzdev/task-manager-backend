@@ -7,4 +7,6 @@ export const errorMsg = {
   ACCOUNT_NOT_CONFIRMED:
     "Account not confirmed yet, we send a confirmation email, please check it",
   INCORRECT_PASSWORD: "Incorrect password",
+  USER_NOT_REGISTERED: "User is not registered yet",
+  USER_ALREADY_CONFIRMED: "User already confirmed",
 };

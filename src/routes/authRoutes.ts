@@ -37,4 +37,11 @@ router.post(
   AuthController.login
 );
 
+router.post(
+  "/request-confirmation-token",
+  body("email").isEmail().withMessage("Email no valid"),
+  handleInputErrors,
+  AuthController.requestConfirmationToken
+);
+
 export default router;
