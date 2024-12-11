@@ -29,6 +29,7 @@ export class ProjectController {
       if (!project) {
         const error = new Error(errorMsg.PROJECT_NOT_FOUND);
         res.status(404).json({ error: error.message });
+        return;
       }
       res.json(project);
     } catch (error) {
@@ -43,6 +44,7 @@ export class ProjectController {
       if (!project) {
         const error = new Error(errorMsg.PROJECT_NOT_FOUND);
         res.status(404).json({ error: error.message });
+        return;
       }
       project.clientName = req.body.clientName;
       project.projectName = req.body.projectName;
@@ -61,6 +63,7 @@ export class ProjectController {
       if (!project) {
         const error = new Error(errorMsg.PROJECT_NOT_FOUND);
         res.status(404).json({ error: error.message });
+        return;
       }
       await project.deleteOne();
       res.json({ msg: projectMsg.PROJECT_DELETED });

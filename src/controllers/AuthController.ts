@@ -17,6 +17,7 @@ export class AuthController {
       if (userExists) {
         const error = new Error(errorMsg.USER_ALREADY_REGIST);
         res.status(409).json({ error: error.message });
+        return;
       }
       // Hash Password
       user.password = await hashPassword(password);
@@ -47,6 +48,7 @@ export class AuthController {
       if (!tokenExist) {
         const error = new Error(errorMsg.TOKEN_NOT_VALID);
         res.status(404).json({ error: error.message });
+        return;
       }
       const user = await User.findById(tokenExist.user);
       user.confirmed = true;
@@ -64,6 +66,7 @@ export class AuthController {
       if (!user) {
         const error = new Error(errorMsg.USER_NOT_FOUND);
         res.status(404).json({ error: error.message });
+        return;
       }
       if (!user.confirmed) {
         const token = new Token();
@@ -78,6 +81,7 @@ export class AuthController {
         });
         const error = new Error(errorMsg.ACCOUNT_NOT_CONFIRMED);
         res.status(401).json({ error: error.message });
+        return;
       }
 
       // Check password
@@ -85,6 +89,7 @@ export class AuthController {
       if (!isPasswordCorrect) {
         const error = new Error(errorMsg.INCORRECT_PASSWORD);
         res.status(401).json({ error: error.message });
+        return;
       }
 
       res.send({ msg: authMsg.USER_AUTHENTICATED });
@@ -102,11 +107,13 @@ export class AuthController {
       if (!user) {
         const error = new Error(errorMsg.USER_NOT_REGISTERED);
         res.status(404).json({ error: error.message });
+        return;
       }
 
       if (user.confirmed) {
         const error = new Error(errorMsg.USER_ALREADY_CONFIRMED);
         res.status(403).json({ error: error.message });
+        return;
       }
 
       // Generate token
