@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { errorMsg } from "../messages";
 import User from "../models/Auth";
-import { authMsg } from "../messages/authMessages";
+import { authMsg } from "../messages";
 import { checkPassword, hashPassword } from "../utils/utils";
 import Token from "../models/Token";
 import { generateToken } from "../utils/token";
@@ -130,6 +130,73 @@ export class AuthController {
 
       await Promise.allSettled([user.save(), token.save()]);
       res.send({ msg: authMsg.RESEND_NEW_TOKEN });
+    } catch (error) {
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+    }
+  };
+
+  static forgotPassword = async (req: Request, res: Response) => {
+    try {
+      const { email } = req.body;
+
+      // Check if user exist
+      const user = await User.findOne({ email });
+      if (!user) {
+        const error = new Error(errorMsg.USER_NOT_REGISTERED);
+        res.status(404).json({ error: error.message });
+        return;
+      }
+
+      // Generate token
+      const token = new Token();
+      token.token = generateToken();
+      token.user = user.id;
+      await token.save();
+
+      // Send email
+      AuthEmail.sendPasswordResetToken({
+        email: user.email,
+        name: user.name,
+        token: token.token,
+      });
+
+      res.send({ msg: authMsg.RESEND_NEW_TOKEN });
+    } catch (error) {
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+    }
+  };
+
+  static validateToken = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.body;
+      const tokenExist = await Token.findOne({ token });
+      if (!tokenExist) {
+        const error = new Error(errorMsg.TOKEN_NOT_VALID);
+        res.status(404).json({ error: error.message });
+        return;
+      }
+      res.send({ msg: authMsg.VALID_TOKEN_NEW_PASSWORD });
+    } catch (error) {
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+    }
+  };
+
+  static updatePasswordWithToken = async (req: Request, res: Response) => {
+    try {
+      const { token } = req.params;
+      const { password } = req.body;
+
+      const tokenExist = await Token.findOne({ token });
+      if (!tokenExist) {
+        const error = new Error(errorMsg.TOKEN_NOT_VALID);
+        res.status(404).json({ error: error.message });
+        return;
+      }
+
+      const user = await User.findById(tokenExist.user);
+      user.password = await hashPassword(password);
+      await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
+      res.send({ msg: authMsg.PASSWORD_CHANGED });
     } catch (error) {
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }

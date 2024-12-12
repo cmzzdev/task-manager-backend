@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { body } from "express-validator";
+import { body, param } from "express-validator";
 import { AuthController } from "../controllers/AuthController";
 import { handleInputErrors } from "../middleware/validation";
 
@@ -39,9 +39,47 @@ router.post(
 
 router.post(
   "/request-confirmation-token",
-  body("email").isEmail().withMessage("Email no valid"),
+  param("token").isNumeric().withMessage("Token not valid"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password is required, minimun 8 characters"),
+  body("password_confirmation").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Password and confirmation password must be the same");
+    }
+    return true;
+  }),
   handleInputErrors,
   AuthController.requestConfirmationToken
+);
+
+router.post(
+  "/forgot-password",
+  body("email").isEmail().withMessage("Email no valid"),
+  handleInputErrors,
+  AuthController.forgotPassword
+);
+
+router.post(
+  "/validate-token",
+  body("token").notEmpty().withMessage("Token must not be empty"),
+  handleInputErrors,
+  AuthController.validateToken
+);
+router.post(
+  "/update-password/:token",
+  param("token").notEmpty().withMessage("Token must not be empty"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password is required, minimun 8 characters"),
+  body("password_confirmation").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Password and confirmation password must be the same");
+    }
+    return true;
+  }),
+  handleInputErrors,
+  AuthController.updatePasswordWithToken
 );
 
 export default router;
