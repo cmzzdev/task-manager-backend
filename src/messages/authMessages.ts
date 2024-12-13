@@ -6,4 +6,6 @@ export const authMsg = {
   RESET_PASSWORD: "Check your email for instruction",
   VALID_TOKEN_NEW_PASSWORD: "Valid token, define new password",
   PASSWORD_CHANGED: "Password changed successfully",
+  NOT_AUTHENTICATED: "Not Authenticated",
+  TOKEN_NOT_VALID: "Token not valid",
 };
