@@ -202,4 +202,9 @@ export class AuthController {
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
     }
   };
+
+  static user = (req: Request, res: Response) => {
+    res.json(req.user);
+    return;
+  };
 }
