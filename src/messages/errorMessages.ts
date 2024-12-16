@@ -9,4 +9,7 @@ export const errorMsg = {
   INCORRECT_PASSWORD: "Incorrect password",
   USER_NOT_REGISTERED: "User is not registered yet",
   USER_ALREADY_CONFIRMED: "User already confirmed",
+  NO_VALID_ACTION: "No valid action",
+  ONLY_MANAGER_CAN_UPDATE: "Only the manager can update the project",
+  ONLY_MANAGER_CAN_DELETE: "Only the manager can delete the project",
 };

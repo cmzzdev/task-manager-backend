@@ -20,11 +20,11 @@ export const authenticate = async (
   if (!bearer) {
     const error = new Error(authMsg.NOT_AUTHENTICATED);
     res.status(401).json({ error: error.message });
+    return;
   }
 
-  const [, token] = bearer.split(" ");
-
   try {
+    const [, token] = bearer.split(" ");
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     if (typeof decoded === "object" && decoded.id) {
       const user = await User.findById(decoded.id).select("_id name email");
@@ -33,10 +33,12 @@ export const authenticate = async (
       } else {
         const error = new Error(authMsg.NOT_AUTHENTICATED);
         res.status(401).json({ error: error.message });
+        return;
       }
     }
   } catch (error) {
     res.status(500).json({ error: authMsg.TOKEN_NOT_VALID });
+    return;
   }
   next();
 };
