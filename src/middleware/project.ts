@@ -20,6 +20,7 @@ export async function projectExists(
     if (!project) {
       const error = new Error("Project not found");
       res.status(404).json({ error: error.message });
+      return;
     }
     req.project = project;
     next();
