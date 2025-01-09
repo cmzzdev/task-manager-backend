@@ -18,7 +18,10 @@ export class ProjectController {
   static getAllProjects = async (req: Request, res: Response) => {
     try {
       const projects = await Project.find({
-        $or: [{ manager: { $in: req.user.id } }], // only authenticate user (owner)
+        $or: [
+          { manager: { $in: req.user.id } },
+          { team: { $in: req.user.id } },
+        ],
       });
       res.json(projects);
     } catch (error) {
@@ -35,7 +38,10 @@ export class ProjectController {
         res.status(404).json({ error: error.message });
         return;
       }
-      if (project.manager.toString() !== req.user.id.toString()) {
+      if (
+        project.manager.toString() !== req.user.id.toString() &&
+        !project.team.includes(req.user.id)
+      ) {
         const error = new Error(errorMsg.NO_VALID_ACTION);
         res.status(404).json({ error: error.message });
         return;
