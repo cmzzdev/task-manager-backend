@@ -45,3 +45,21 @@ export async function taskBelongsToProject(
     res.status(500).json({ error: "Internal Server Error" });
   }
 }
+
+export async function hasAuthorization(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    if (req.user.id.toString() !== req.project.manager.toString()) {
+      const error = new Error("No valid action");
+      res.status(400).json({ error: error.message });
+      return;
+    }
+    next();
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+}
