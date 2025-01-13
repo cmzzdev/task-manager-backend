@@ -1,5 +1,5 @@
 import { type Request, type Response } from "express";
-import Task from "../models/Task";
+import Task, { taskStatus } from "../models/Task";
 import { errorMsg, taskMsg } from "../messages";
 
 export class TaskController {
@@ -30,7 +30,11 @@ export class TaskController {
 
   static getTaskById = async (req: Request, res: Response) => {
     try {
-      res.json(req.task);
+      const task = await Task.findById(req.task.id).populate({
+        path: "completedBy",
+        select: "id name email",
+      });
+      res.json(task);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
@@ -66,6 +70,11 @@ export class TaskController {
     try {
       const { status } = req.body;
       req.task.status = status;
+      if (status === taskStatus.PENDING) {
+        req.task.completedBy = null;
+      } else {
+        req.task.completedBy = req.user.id;
+      }
       await req.task.save();
       res.json({ msg: taskMsg.TASK_UPDATED });
     } catch (error) {
