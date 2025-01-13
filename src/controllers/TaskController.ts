@@ -70,11 +70,11 @@ export class TaskController {
     try {
       const { status } = req.body;
       req.task.status = status;
-      if (status === taskStatus.PENDING) {
-        req.task.completedBy = null;
-      } else {
-        req.task.completedBy = req.user.id;
-      }
+      const data = {
+        user: req.user.id,
+        status,
+      };
+      req.task.completedBy.push(data);
       await req.task.save();
       res.json({ msg: taskMsg.TASK_UPDATED });
     } catch (error) {
