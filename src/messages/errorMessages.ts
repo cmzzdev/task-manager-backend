@@ -12,4 +12,5 @@ export const errorMsg = {
   NO_VALID_ACTION: "No valid action",
   ONLY_MANAGER_CAN_UPDATE: "Only the manager can update the project",
   ONLY_MANAGER_CAN_DELETE: "Only the manager can delete the project",
+  NOTE_NOT_FOUND: "Note not found",
 };
