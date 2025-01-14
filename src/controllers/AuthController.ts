@@ -38,7 +38,9 @@ export class AuthController {
       await Promise.allSettled([user.save(), token.save()]);
       res.send({ msg: authMsg.ACCOUNT_CREATED });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -56,7 +58,9 @@ export class AuthController {
       await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
       res.send({ msg: authMsg.ACCOUNT_CONFIRMED });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -95,7 +99,9 @@ export class AuthController {
       const token = generateJWT({ id: user.id });
       res.send(token);
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -132,7 +138,9 @@ export class AuthController {
       await Promise.allSettled([user.save(), token.save()]);
       res.send({ msg: authMsg.RESEND_NEW_TOKEN });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -163,7 +171,9 @@ export class AuthController {
 
       res.send({ msg: authMsg.RESEND_NEW_TOKEN });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -178,7 +188,9 @@ export class AuthController {
       }
       res.send({ msg: authMsg.VALID_TOKEN_NEW_PASSWORD });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -199,12 +211,61 @@ export class AuthController {
       await Promise.allSettled([user.save(), tokenExist.deleteOne()]);
       res.send({ msg: authMsg.PASSWORD_CHANGED });
     } catch (error) {
+      console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
-  static user = (req: Request, res: Response) => {
+  static user = async (req: Request, res: Response) => {
     res.json(req.user);
     return;
+  };
+
+  static updateProfile = async (req: Request, res: Response) => {
+    const { name, email } = req.body;
+
+    const userExist = await User.findOne({ email });
+
+    if (userExist && userExist.id.toString() !== req.user.id.toString()) {
+      const error = new Error(errorMsg.EMAIL_ALREADY_REGISTERED);
+      res.status(409).json({ error: error.message });
+      return;
+    }
+
+    req.user.name = name;
+    req.user.email = email;
+
+    try {
+      await req.user.save();
+      res.send({ msg: authMsg.PROFILE_UPDATED });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
+    }
+  };
+
+  static updateCurrrentUserPassword = async (req: Request, res: Response) => {
+    const { current_password, password, password_confirmation } = req.body;
+    const user = await User.findById(req.user.id);
+    const isPasswordCorrect = await checkPassword(
+      current_password,
+      user.password
+    );
+    if (!isPasswordCorrect) {
+      const error = new Error(errorMsg.CURRENT_PASSWORD_INCORRECT);
+      res.status(401).json({ error: error.message });
+      return;
+    }
+    try {
+      user.password = await hashPassword(password);
+      await user.save();
+      res.send({ msg: authMsg.PASSWORD_UPDATED });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
+    }
   };
 }

@@ -20,6 +20,7 @@ export class NoteController {
       res.json({ msg: noteMsg.NOTE_CREATED });
     } catch (error) {
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -29,6 +30,7 @@ export class NoteController {
       res.json(notes);
     } catch (error) {
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -56,6 +58,7 @@ export class NoteController {
       res.json({ msg: noteMsg.NOTE_DELETED });
     } catch (error) {
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 }

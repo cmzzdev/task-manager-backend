@@ -1,6 +1,6 @@
 export const errorMsg = {
   PROJECT_NOT_FOUND: "Project not found",
-  INTERNAL_SERVER_ERROR: "Internal server errors",
+  INTERNAL_SERVER_ERROR: "Internal server error",
   USER_ALREADY_REGIST: "User already registered",
   TOKEN_NOT_VALID: "Token not valid",
   USER_NOT_FOUND: "User not found",
@@ -13,4 +13,6 @@ export const errorMsg = {
   ONLY_MANAGER_CAN_UPDATE: "Only the manager can update the project",
   ONLY_MANAGER_CAN_DELETE: "Only the manager can delete the project",
   NOTE_NOT_FOUND: "Note not found",
+  EMAIL_ALREADY_REGISTERED: "This email is already registered",
+  CURRENT_PASSWORD_INCORRECT: "Incorrect current password",
 };

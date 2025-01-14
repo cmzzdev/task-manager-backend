@@ -85,4 +85,33 @@ router.post(
 
 router.get("/user", authenticate, AuthController.user);
 
+/** Profile */
+router.put(
+  "/profile",
+  authenticate,
+  body("name").notEmpty().withMessage("Name is required"),
+  body("email").isEmail().withMessage("Email no valid"),
+  handleInputErrors,
+  AuthController.updateProfile
+);
+
+router.post(
+  "/update-password",
+  authenticate,
+  body("current_password")
+    .notEmpty()
+    .withMessage("Current password is required"),
+  body("password")
+    .isLength({ min: 8 })
+    .withMessage("Password is required, minimun 8 characters"),
+  body("password_confirmation").custom((value, { req }) => {
+    if (value !== req.body.password) {
+      throw new Error("Password and confirmation password must be the same");
+    }
+    return true;
+  }),
+  handleInputErrors,
+  AuthController.updateCurrrentUserPassword
+);
+
 export default router;

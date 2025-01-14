@@ -12,6 +12,8 @@ export class ProjectController {
       res.json({ msg: projectMsg.PROJECT_CREATED });
     } catch (error) {
       console.log(error);
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -26,6 +28,8 @@ export class ProjectController {
       res.json(projects);
     } catch (error) {
       console.log(error);
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -49,6 +53,8 @@ export class ProjectController {
       res.json(project);
     } catch (error) {
       console.log(error);
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -73,6 +79,8 @@ export class ProjectController {
       res.send(project);
     } catch (error) {
       console.log(error);
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -94,6 +102,8 @@ export class ProjectController {
       res.json({ msg: projectMsg.PROJECT_DELETED });
     } catch (error) {
       console.log(error);
+      res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 }

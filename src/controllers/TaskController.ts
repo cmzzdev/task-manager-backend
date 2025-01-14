@@ -13,6 +13,7 @@ export class TaskController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -25,6 +26,7 @@ export class TaskController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -43,6 +45,7 @@ export class TaskController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -55,6 +58,7 @@ export class TaskController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -68,6 +72,7 @@ export class TaskController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 
@@ -85,6 +90,7 @@ export class TaskController {
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
+      return;
     }
   };
 }
