@@ -10,4 +10,5 @@ export const authMsg = {
   TOKEN_NOT_VALID: "Token not valid",
   PROFILE_UPDATED: "Profile updated successfully",
   PASSWORD_UPDATED: "Password updated successfully",
+  PASSWORD_CORRECT: "Correct Password",
 };

@@ -15,4 +15,5 @@ export const errorMsg = {
   NOTE_NOT_FOUND: "Note not found",
   EMAIL_ALREADY_REGISTERED: "This email is already registered",
   CURRENT_PASSWORD_INCORRECT: "Incorrect current password",
+  PASSWORD_INCORRECT: "Incorrect passord",
 };
