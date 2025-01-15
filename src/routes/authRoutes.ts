@@ -111,7 +111,7 @@ router.post(
     return true;
   }),
   handleInputErrors,
-  AuthController.updateCurrrentUserPassword
+  AuthController.updateCurrentUserPassword
 );
 
 export default router;
