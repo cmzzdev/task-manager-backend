@@ -59,24 +59,12 @@ export class ProjectController {
   };
 
   static updateProject = async (req: Request, res: Response) => {
-    const { id } = req.params;
     try {
-      const project = await Project.findById(id);
-      if (!project) {
-        const error = new Error(errorMsg.PROJECT_NOT_FOUND);
-        res.status(404).json({ error: error.message });
-        return;
-      }
-      if (project.manager.toString() !== req.user.id.toString()) {
-        const error = new Error(errorMsg.ONLY_MANAGER_CAN_UPDATE);
-        res.status(404).json({ error: error.message });
-        return;
-      }
-      project.clientName = req.body.clientName;
-      project.projectName = req.body.projectName;
-      project.description = req.body.description;
-      await project.save();
-      res.send(project);
+      req.project.clientName = req.body.clientName;
+      req.project.projectName = req.body.projectName;
+      req.project.description = req.body.description;
+      await req.project.save();
+      res.send(req.project);
     } catch (error) {
       console.log(error);
       res.status(500).json({ error: errorMsg.INTERNAL_SERVER_ERROR });
@@ -85,20 +73,8 @@ export class ProjectController {
   };
 
   static deleteProject = async (req: Request, res: Response) => {
-    const { id } = req.params;
     try {
-      const project = await Project.findById(id);
-      if (!project) {
-        const error = new Error(errorMsg.PROJECT_NOT_FOUND);
-        res.status(404).json({ error: error.message });
-        return;
-      }
-      if (project.manager.toString() !== req.user.id.toString()) {
-        const error = new Error(errorMsg.ONLY_MANAGER_CAN_DELETE);
-        res.status(404).json({ error: error.message });
-        return;
-      }
-      await project.deleteOne();
+      await req.project.deleteOne();
       res.json({ msg: projectMsg.PROJECT_DELETED });
     } catch (error) {
       console.log(error);
